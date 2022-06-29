@@ -108,12 +108,11 @@ class _MyMap extends State {
     var result = sakaguraList[value];
     if (result != null) {
       setState(() {
-        // predictions.add(result["酒蔵名"]);
-        // predictions.add(result["経度"]);
-        // predictions.add(result["緯度"]);
-        // predictions.add(result["住所"]);
         predictions!.addAll(result);
-        // loadJson.fromJson(result);
+      });
+    } else {
+      setState(() {
+        predictions!.clear();
       });
     }
   }
