@@ -159,30 +159,32 @@ class _MyMap extends State {
               _controller.complete(controller);
             },
           ),
-          IgnorePointer(
-            child: ListView.builder(
-              itemCount: 1,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 8,
-                  child: ListTile(
-                    title: Text(predictions?["酒蔵名"] ?? ''),
-                    onTap: () async {
-
-                      setState(() {
-                        // 取得した経度と緯度を配列に格納
-                        latLng.add(predictions?['経度'] ?? '');
-                        latLng.add(predictions?['緯度'] ?? '');
-                      });
-                      await _searchLocation(latLng);
-                      setState(() {
-                        latLng = [];
-                        predictions!.clear();
-                      });
-                    },
-                  ),
-                );
-              },
+          Visibility(
+            visible: predictions!.isNotEmpty,
+            child: IgnorePointer(
+              child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 8,
+                    child: ListTile(
+                      title: Text(predictions?["酒蔵名"] ?? ''),
+                      onTap: () async {
+                        setState(() {
+                          // 取得した経度と緯度を配列に格納
+                          latLng.add(predictions?['経度'] ?? '');
+                          latLng.add(predictions?['緯度'] ?? '');
+                        });
+                        await _searchLocation(latLng);
+                        setState(() {
+                          latLng = [];
+                          predictions!.clear();
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
