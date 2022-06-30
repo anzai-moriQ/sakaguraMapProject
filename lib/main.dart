@@ -165,32 +165,34 @@ class _MyMap extends State {
           // 白いサジェスト枠が表示されるため、検索結果が０件(空)の場合はリストを非表示にする
           Visibility(
             visible: predictions!.isNotEmpty,
-            child: IgnorePointer(
-              child: ListView.builder(
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return Card(
+          //   child:
+          //   IgnorePointer(
+              child: ListView(
+                children : [
+                  Card(
                     elevation: 8,
-                    child: ListTile(
-                      title: Text(predictions?["酒蔵名"] ?? ''),
-                      onTap: () async {
-                        setState(() {
-                          // 引数の関係上、必ず経度から格納すること
-                          latLng.add(predictions?['経度'] ?? '');
-                          latLng.add(predictions?['緯度'] ?? '');
-                        });
-                        await _searchLocation(latLng);
-                        setState(() {
-                          // 検索結果を初期化する
-                          latLng = [];
-                          predictions!.clear();
-                        });
-                      },
+                    // child: GestureDetector(
+                      child: ListTile(
+                        title: Text(predictions?["酒蔵名"] ?? ''),
+                        onTap: () async {
+                          setState(() {
+                            // 引数の関係上、必ず経度から格納すること
+                            latLng.add(predictions?['経度']);
+                            latLng.add(predictions?['緯度']);
+                          });
+                          await _searchLocation(latLng);
+                          setState(() {
+                            // 検索結果を初期化する
+                            latLng = [];
+                            predictions!.clear();
+                          });
+                        },
+                      ),
                     ),
-                  );
-                },
+                  // ),
+                ],
               ),
-            ),
+            // ),
           ),
         ],
       ),
@@ -213,6 +215,6 @@ class _MyMap extends State {
   Future<void> _searchLocation(List result) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
-        getLocateAPI.convert(result[0], result[1], 15)));
+        getLocateAPI.convert(double.parse(result[0]), double.parse(result[1]), 15)));
   }
 }
