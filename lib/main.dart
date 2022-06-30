@@ -128,7 +128,8 @@ class _MyMap extends State {
     Future<CameraPosition> location = getLocateAPI.getLocation();
     location.then((result) => cameraPosition = result);
     // 初期値がnullの場合は名古屋駅を開始地点とする
-    cameraPosition ??= getLocateAPI.convert(35.17176088096857, 136.88817886263607, 14.4746);
+    cameraPosition ??=
+        getLocateAPI.convert(35.17176088096857, 136.88817886263607, 14.4746);
     return Scaffold(
       appBar: AppBar(
           title: _searchBoolean ? const Text('日本酒マップ') : _searchTextField(),
@@ -165,33 +166,33 @@ class _MyMap extends State {
           // 白いサジェスト枠が表示されるため、検索結果が０件(空)の場合はリストを非表示にする
           Visibility(
             visible: predictions!.isNotEmpty,
-          //   child:
-          //   IgnorePointer(
-              child: ListView(
-                children : [
-                  Card(
-                    elevation: 8,
-                    // child: GestureDetector(
-                      child: ListTile(
-                        title: Text(predictions?["酒蔵名"] ?? ''),
-                        onTap: () async {
-                          setState(() {
-                            // 引数の関係上、必ず経度から格納すること
-                            latLng.add(predictions?['経度']);
-                            latLng.add(predictions?['緯度']);
-                          });
-                          await _searchLocation(latLng);
-                          setState(() {
-                            // 検索結果を初期化する
-                            latLng = [];
-                            predictions!.clear();
-                          });
-                        },
-                      ),
-                    ),
-                  // ),
-                ],
-              ),
+            //   child:
+            //   IgnorePointer(
+            child: ListView(
+              children: [
+                Card(
+                  elevation: 8,
+                  // child: GestureDetector(
+                  child: ListTile(
+                    title: Text(predictions?["酒蔵名"] ?? ''),
+                    onTap: () async {
+                      setState(() {
+                        // 引数の関係上、必ず経度から格納すること
+                        latLng.add(predictions?['経度']);
+                        latLng.add(predictions?['緯度']);
+                      });
+                      await _searchLocation(latLng);
+                      setState(() {
+                        // 検索結果を初期化する
+                        latLng = [];
+                        predictions!.clear();
+                      });
+                    },
+                  ),
+                ),
+                // ),
+              ],
+            ),
             // ),
           ),
         ],
@@ -214,7 +215,7 @@ class _MyMap extends State {
   // 検索した値のクリックイベント
   Future<void> _searchLocation(List result) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        getLocateAPI.convert(double.parse(result[0]), double.parse(result[1]), 15)));
+    controller.animateCamera(CameraUpdate.newCameraPosition(getLocateAPI
+        .convert(double.parse(result[0]), double.parse(result[1]), 15)));
   }
 }
