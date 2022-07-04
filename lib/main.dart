@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyMap(),
+      home: const MyMap(),
       // コピぺのUIを日本語に変更するための設定値
       supportedLocales: const [Locale('ja', 'JP')],
       localizationsDelegates: const [
@@ -38,6 +38,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyMap extends StatefulWidget {
+  const MyMap({Key? key}) : super(key: key);
+
   @override
   State createState() => _MyMap();
 }
@@ -131,9 +133,9 @@ class _MyMap extends State {
     cameraPosition ??=
         getLocateAPI.convert(35.17176088096857, 136.88817886263607, 14.4746);
 
-    Set<Marker> _markers = { };
-    _markers.add(_createMarker('marker1', cameraPosition.target.latitude, cameraPosition.target.longitude));
-    var con;
+    late Set<Marker> markers = {};
+    markers.add(_createMarker('marker1', cameraPosition.target.latitude,
+        cameraPosition.target.longitude));
 
     return Scaffold(
       appBar: AppBar(
@@ -141,7 +143,7 @@ class _MyMap extends State {
           actions: !_searchBoolean
               ? [
                   IconButton(
-                      icon: Icon(Icons.clear),
+                      icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
                           _searchBoolean = true;
@@ -151,7 +153,7 @@ class _MyMap extends State {
                 ]
               : [
                   IconButton(
-                      icon: Icon(Icons.search),
+                      icon: const Icon(Icons.search),
                       onPressed: () {
                         setState(() {
                           _searchBoolean = false;
@@ -164,13 +166,12 @@ class _MyMap extends State {
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: cameraPosition,
-            markers: _markers,
-          // predictions!.isEmpty ?
-          //     _createMarker('marker1', cameraPosition.target.latitude, cameraPosition.target.longitude)
-          //     : _createMarker(predictions?["酒蔵名"], double.parse(predictions?["経度"]), double.parse(predictions?["緯度"])),
+            markers: markers,
+            // predictions!.isEmpty ?
+            //     _createMarker('marker1', cameraPosition.target.latitude, cameraPosition.target.longitude)
+            //     : _createMarker(predictions?["酒蔵名"], double.parse(predictions?["経度"]), double.parse(predictions?["緯度"])),
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
-              con = controller;
             },
           ),
           // 白いサジェスト枠が表示されるため、検索結果が０件(空)の場合はリストを非表示にする
@@ -190,13 +191,16 @@ class _MyMap extends State {
                         // 引数の関係上、必ず経度から格納すること
                         latLng.add(predictions?["経度"]);
                         latLng.add(predictions?["緯度"]);
-                        
-                        _markers.clear();
+
+                        markers.clear();
                       });
                       await _searchLocation(latLng);
                       setState(() {
-                        _markers.clear();
-                        _markers.add(_createMarker(predictions?["酒蔵名"], double.parse(predictions?["経度"]), double.parse(predictions?["緯度"])));
+                        markers.clear();
+                        markers.add(_createMarker(
+                            predictions?["酒蔵名"],
+                            double.parse(predictions?["経度"]),
+                            double.parse(predictions?["緯度"])));
                         // 検索結果を初期化する
                         latLng = [];
                         predictions!.clear();
@@ -235,11 +239,10 @@ class _MyMap extends State {
 
   // マーカークラスの定義
   Marker _createMarker(String name, double lat, double lon) {
-    return
-      Marker(
-        markerId: MarkerId(name),
-        position: LatLng(lat, lon),
-        infoWindow: InfoWindow(title: name),
-      );
+    return Marker(
+      markerId: MarkerId(name),
+      position: LatLng(lat, lon),
+      infoWindow: InfoWindow(title: name),
+    );
   }
 }
