@@ -130,6 +130,11 @@ class _MyMap extends State {
     // 初期値がnullの場合は名古屋駅を開始地点とする
     cameraPosition ??=
         getLocateAPI.convert(35.17176088096857, 136.88817886263607, 14.4746);
+
+    Set<Marker> _markers = { };
+    _markers.add(_createMarker('marker1', cameraPosition.target.latitude, cameraPosition.target.longitude));
+    var con;
+
     return Scaffold(
       appBar: AppBar(
           title: _searchBoolean ? const Text('日本酒マップ') : _searchTextField(),
@@ -159,8 +164,13 @@ class _MyMap extends State {
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: cameraPosition,
+            markers: _markers,
+          // predictions!.isEmpty ?
+          //     _createMarker('marker1', cameraPosition.target.latitude, cameraPosition.target.longitude)
+          //     : _createMarker(predictions?["酒蔵名"], double.parse(predictions?["経度"]), double.parse(predictions?["緯度"])),
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
+              con = controller;
             },
           ),
           // 白いサジェスト枠が表示されるため、検索結果が０件(空)の場合はリストを非表示にする
@@ -178,11 +188,15 @@ class _MyMap extends State {
                     onTap: () async {
                       setState(() {
                         // 引数の関係上、必ず経度から格納すること
-                        latLng.add(predictions?['経度']);
-                        latLng.add(predictions?['緯度']);
+                        latLng.add(predictions?["経度"]);
+                        latLng.add(predictions?["緯度"]);
+                        
+                        _markers.clear();
                       });
                       await _searchLocation(latLng);
                       setState(() {
+                        _markers.clear();
+                        _markers.add(_createMarker(predictions?["酒蔵名"], double.parse(predictions?["経度"]), double.parse(predictions?["緯度"])));
                         // 検索結果を初期化する
                         latLng = [];
                         predictions!.clear();
@@ -200,7 +214,7 @@ class _MyMap extends State {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: _goToCurrentLocation,
-        child: Icon(Icons.location_on),
+        child: const Icon(Icons.location_on),
       ),
     );
   }
@@ -216,6 +230,16 @@ class _MyMap extends State {
   Future<void> _searchLocation(List result) async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(getLocateAPI
-        .convert(double.parse(result[0]), double.parse(result[1]), 15)));
+        .convert(double.parse(result[1]), double.parse(result[0]), 17)));
+  }
+
+  // マーカークラスの定義
+  Marker _createMarker(String name, double lat, double lon) {
+    return
+      Marker(
+        markerId: MarkerId(name),
+        position: LatLng(lat, lon),
+        infoWindow: InfoWindow(title: name),
+      );
   }
 }
