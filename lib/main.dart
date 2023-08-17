@@ -56,7 +56,7 @@ class _MyMap extends State {
   var latLng = [];
 
   GooglePlace googlePlace =
-      GooglePlace("AIzaSyD6xjoimFPby09A5aG1f4g-lsAoMG50-04");
+      GooglePlace(// ここにAPIキー);
 
   dynamic sakaguraList = [];
 
