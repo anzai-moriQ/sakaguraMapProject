@@ -55,8 +55,9 @@ class _MyMap extends State {
   // 引数用の経度・緯度を格納する
   var latLng = [];
 
+  // ここにAPIキー
   GooglePlace googlePlace =
-      GooglePlace("AIzaSyD6xjoimFPby09A5aG1f4g-lsAoMG50-04");
+      GooglePlace();
 
   dynamic sakaguraList = [];
 
